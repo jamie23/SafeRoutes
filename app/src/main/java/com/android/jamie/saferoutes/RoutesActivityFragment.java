@@ -1,15 +1,21 @@
 package com.android.jamie.saferoutes;
 import android.app.Fragment;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -59,6 +65,11 @@ public class RoutesActivityFragment extends Fragment {
 
         ListView listView = (ListView) rootView.findViewById(R.id.listview_routes);
         listView.setAdapter(mRoutesAdapter);
+
+
+       SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+       String start = pref.getString(getString(R.string.start_point), null);
+       String end = pref.getString(getString(R.string.end_point), null);
 
         return rootView;
     }

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +20,9 @@ import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+
+import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -91,11 +95,12 @@ public class JourneyActivityFragment extends Fragment {
         public void onClick(View v) {
             Log.d(TAG, mAutocompleteView1.getText().toString());
 
-            SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPref.edit();
+            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            SharedPreferences.Editor editor = sp.edit();
+
             editor.putString(getString(R.string.start_point), mAutocompleteView1.getText().toString());
             editor.putString(getString(R.string.end_point), mAutocompleteView2.getText().toString());
-            editor.commit();
+            editor.apply();
 
             Intent intent = new Intent(getActivity(), RoutesActivity.class);
             startActivity(intent);
