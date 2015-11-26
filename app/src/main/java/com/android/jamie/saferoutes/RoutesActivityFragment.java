@@ -1,8 +1,6 @@
 package com.android.jamie.saferoutes;
 import android.app.Fragment;
-import android.content.Context;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -13,27 +11,25 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
-
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class RoutesActivityFragment extends Fragment {
+
+    //Populated with data grabbed from google directions API
+    //used it to populate the listview for user selection
+    ArrayAdapter<String> mRoutesAdapter;
 
     public RoutesActivityFragment() {
     }
@@ -48,9 +44,7 @@ public class RoutesActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        //Create ArrayAdapter, populate it with data grabbed from google]
-        //and use it to populate the listview.
-        ArrayAdapter<String> mRoutesAdapter;
+
 
         // Create some dummy data for the ListView.  Here's a sample weekly forecast
         String[] data = {
@@ -75,15 +69,10 @@ public class RoutesActivityFragment extends Fragment {
         ListView listView = (ListView) rootView.findViewById(R.id.listview_routes);
         listView.setAdapter(mRoutesAdapter);
 
-
-       SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-       String start = pref.getString(getString(R.string.start_point), null);
-       String end = pref.getString(getString(R.string.end_point), null);
-
         return rootView;
     }
 
-    public class FetchRoutes extends AsyncTask<String, Void, JSONObject>{
+    public class FetchRoutes extends AsyncTask<String, Void, JSONObject[]>{
 
         private final String LOG_TAG = FetchRoutes.class.getSimpleName();
 
@@ -91,7 +80,7 @@ public class RoutesActivityFragment extends Fragment {
             https://maps.googleapis.com/maps/api/directions/json?origin=Brooklyn&destination=Queens&departure_time=1343641500&mode=transit
          */
         @Override
-        protected JSONObject doInBackground(String... params) {
+        protected JSONObject[] doInBackground(String... params) {
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
             SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -142,8 +131,6 @@ public class RoutesActivityFragment extends Fragment {
                     // print out the completed buffer for debugging.
                     buffer.append(line + "\n");
                 }
-
-
             }catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
                 return null;
@@ -160,7 +147,18 @@ public class RoutesActivityFragment extends Fragment {
                 }
             }
             return null;
+        }
 
+        //
+        @Override
+        protected void onPostExecute(JSONObject[] routeData) {
+            mRoutesAdapter.clear();
+
+           //Must do processing here to get string to populate mRoutesAdapter
+
+
+            //Routes adapter must take a string
+            mRoutesAdapter.addAll();
         }
     }
 }
